@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Hybrid Master 51 - Webapp Suivi d’Entraînement" />
+  <title>Hybrid Master 51 - Suivi</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 36 36%22><text y=%2232%22 font-size=%2232%22>🏋️‍♂️</text></svg>"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <header>
+    <h1>Hybrid Master 51</h1>
+    <nav>
+      <button id="workoutViewBtn" aria-label="Vue Séances">Séances</button>
+      <button id="statsViewBtn" aria-label="Vue Statistiques">Statistiques</button>
+    </nav>
+  </header>
+  <main>
+    <section id="onboardingHint"></section>
+    <section id="workoutSection" aria-label="Séances">
+      <div class="week-nav">
+        <button id="prevWeekBtn" aria-label="Semaine précédente">◀</button>
+        <input type="range" id="weekSlider" min="1" max="26" value="1" aria-label="Semaine">
+        <button id="nextWeekBtn" aria-label="Semaine suivante">▶</button>
+        <span id="currentWeekLabel">Semaine 1</span>
+      </div>
+      <div id="sessionsContainer"></div>
+      <button id="finishWorkoutBtn">Terminer la séance</button>
+      <div id="saveInfo"></div>
+    </section>
+    <section id="statsSection" style="display:none;" aria-label="Statistiques">
+      <div class="stats-cards">
+        <div class="stat-card">
+          <span id="totalVolume">0</span>
+          <label>Volume total (kg)</label>
+        </div>
+        <div class="stat-card">
+          <span id="sessionsCompleted">0</span>
+          <label>Séances complétées</label>
+        </div>
+        <div class="stat-card">
+          <span id="timeEstimated">0 min</span>
+          <label>Temps estimé</label>
+        </div>
+        <div class="stat-card">
+          <span id="splitSummary"></span>
+          <label>Répartition musculaire</label>
+        </div>
+      </div>
+      <div>
+        <canvas id="volumeChart" height="100"></canvas>
+      </div>
+      <div>
+        <canvas id="progressionChart" height="100"></canvas>
+      </div>
+    </section>
+  </main>
+  <div id="selftest-overlay" aria-live="polite" style="display:none;">
+    <div id="selftest-content"></div>
+  </div>
+  <footer>
+    <small>Hybrid Master 51 &copy; 2025</small>
+  </footer>
+  <script src="app.js"></script>
+</body>
+</html>
