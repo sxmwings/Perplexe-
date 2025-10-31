@@ -1,68 +1,85 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="Hybrid Master 51 - Webapp Suivi d’Entraînement" />
-  <title>Hybrid Master 51 - Suivi</title>
-  <link rel="stylesheet" href="styles.css">
-  <link rel="icon" href="image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 36 36%22><text y=%2232%22 font-size=%2232%22>🏋️‍♂️</text></svg>"/>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hybrid Master 51</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+    <meta name="description" content="Programme d'entraînement Hybrid Master 51 pour 26 semaines.">
+    <meta name="theme-color" content="#1c1c1c">
 </head>
 <body>
-  <header>
-    <h1>Hybrid Master 51</h1>
-    <nav>
-      <button id="workoutViewBtn" aria-label="Vue Séances">Séances</button>
-      <button id="statsViewBtn" aria-label="Vue Statistiques">Statistiques</button>
-    </nav>
-  </header>
-  <main>
-    <section id="onboardingHint"></section>
-    <section id="workoutSection" aria-label="Séances">
-      <div class="week-nav">
-        <button id="prevWeekBtn" aria-label="Semaine précédente">◀</button>
-        <input type="range" id="weekSlider" min="1" max="26" value="1" aria-label="Semaine">
-        <button id="nextWeekBtn" aria-label="Semaine suivante">▶</button>
-        <span id="currentWeekLabel">Semaine 1</span>
-      </div>
-      <div id="sessionsContainer"></div>
-      <button id="finishWorkoutBtn">Terminer la séance</button>
-      <div id="saveInfo"></div>
-    </section>
-    <section id="statsSection" style="display:none;" aria-label="Statistiques">
-      <div class="stats-cards">
-        <div class="stat-card">
-          <span id="totalVolume">0</span>
-          <label>Volume total (kg)</label>
+
+    <header>
+        <h1 tabindex="0">Hybrid Master 51</h1>
+        <div id="week-navigation">
+            <button id="prev-week" aria-label="Semaine précédente" tabindex="0">◀</button>
+            <span id="current-week-display" tabindex="0">Semaine 1 / 26</span>
+            <button id="next-week" aria-label="Semaine suivante" tabindex="0">▶</button>
         </div>
-        <div class="stat-card">
-          <span id="sessionsCompleted">0</span>
-          <label>Séances complétées</label>
+        <input type="range" id="week-slider" min="1" max="26" value="1" aria-label="Sélectionner la semaine">
+    </header>
+
+    <main id="app-container">
+        <div id="onboarding-hint" class="hint" style="display: none;" role="alert">
+            <p><strong>Conseil:</strong> Pour une expérience optimale sur mobile, ouvrez ce fichier via un serveur web (comme GitHub Pages) ou directement dans <strong>Safari</strong> si vous êtes sur iPhone. Le protocole "file://" peut bloquer la sauvegarde.</p>
         </div>
-        <div class="stat-card">
-          <span id="timeEstimated">0 min</span>
-          <label>Temps estimé</label>
+
+        <section id="program-view">
+            <div id="workouts-container">
+                <p class="loading-text">Chargement du programme...</p>
+            </div>
+            <button id="finish-workout" class="primary-button" aria-label="Terminer la séance en cours et passer à la semaine suivante">Terminer la séance</button>
+            <p id="last-save-info" class="hint" tabindex="0">Dernière sauvegarde : --:--</p>
+        </section>
+
+        <section id="stats-view" class="hidden">
+            <h2 tabindex="0">Statistiques Hevy-like</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-value" id="stat-volume">0 kg</span>
+                    <span class="stat-label">Volume Total</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value" id="stat-sessions">0</span>
+                    <span class="stat-label">Séances Complétées</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value" id="stat-time">0h 0m</span>
+                    <span class="stat-label">Temps Estimé (cumulé)</span>
+                </div>
+            </div>
+
+            <h3>Répartition Musculaire</h3>
+            <canvas id="muscle-chart" aria-label="Graphique de répartition par groupe musculaire"></canvas>
+
+            <h3>Progression des Lifts (Poids Calculé)</h3>
+            <canvas id="progression-chart" aria-label="Graphique de progression de 3 exercices majeurs sur 26 semaines avec marqueurs de deloads"></canvas>
+        </section>
+
+        <nav id="bottom-nav">
+            <button id="nav-program" class="active" aria-label="Afficher le programme d'entraînement" tabindex="0">Programme</button>
+            <button id="nav-stats" aria-label="Afficher les statistiques et la progression" tabindex="0">Stats</button>
+        </nav>
+    </main>
+
+    <div id="rest-timer-overlay" style="display: none;" role="timer" aria-live="polite">
+        <div id="timer-box">
+            <p>Repos en cours...</p>
+            <div id="timer-display" aria-atomic="true">00:00</div>
+            <button id="timer-cancel" aria-label="Annuler le timer de repos">Passer le repos</button>
         </div>
-        <div class="stat-card">
-          <span id="splitSummary"></span>
-          <label>Répartition musculaire</label>
+    </div>
+
+    <div id="selftest-overlay" style="display: none;" role="status">
+        <div id="selftest-report">
+            <h2>Rapport SelfTest</h2>
+            <ul id="selftest-results">
+                </ul>
         </div>
-      </div>
-      <div>
-        <canvas id="volumeChart" height="100"></canvas>
-      </div>
-      <div>
-        <canvas id="progressionChart" height="100"></canvas>
-      </div>
-    </section>
-  </main>
-  <div id="selftest-overlay" aria-live="polite" style="display:none;">
-    <div id="selftest-content"></div>
-  </div>
-  <footer>
-    <small>Hybrid Master 51 &copy; 2025</small>
-  </footer>
-  <script src="app.js"></script>
+    </div>
+    
+    <script src="app.js"></script>
 </body>
 </html>
